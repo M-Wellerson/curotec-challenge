@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+    app:
+        build: .
+        volumes: [".:/var/www/html"]
+        depends_on: [db]
+        environment: { APP_ENV: local, DB_HOST: db }
+        ports: ["8000:8000"]
+        command: php -S 0.0.0.0:8000 -t public
+
+    db:
+        image: postgres:15
+        environment:
+            POSTGRES_DB: laravel
+            POSTGRES_USER: laravel
+            POSTGRES_PASSWORD: secret
+        ports: ["5432:5432"]
