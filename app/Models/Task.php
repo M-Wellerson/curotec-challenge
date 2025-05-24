@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Tasks extends Model
+class Task extends Model
 {
     protected $fillable = [
         'title',
@@ -46,20 +46,23 @@ class Tasks extends Model
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Tasks::class, 'parent_task_id');
+        return $this->belongsTo(Task::class, 'parent_task_id');
     }
 
     public function subtasks(): HasMany
     {
-        return $this->hasMany(Tasks::class, 'parent_task_id');
+        return $this->hasMany(Task::class, 'parent_task_id');
     }
 
-    public function assignees(): BelongsToMany
+    public function assignees()
     {
-        return $this->belongsToMany(User::class, 'task_assignments')
-            ->using(TaskAssignments::class)
-            ->withPivot('assigned_at')
-            ->withTimestamps();
+        return $this->belongsToMany(
+            User::class,
+            'task_assignments',
+            'task_id',
+            'user_id'
+        )->withPivot('assigned_at')
+            ->using(TaskAssignments::class);
     }
 
     public function scopeDue($query, $date)
