@@ -69,4 +69,9 @@ class Task extends Model
     {
         return $query->whereDate('due_date', '<=', $date);
     }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'category_task', 'task_id', 'category_id');
+    }
 }

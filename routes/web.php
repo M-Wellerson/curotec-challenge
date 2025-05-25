@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Models\Category;
 use App\Models\TaskPriorities;
 use App\Models\Task;
+use App\Models\TaskStatuses;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -30,18 +33,16 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Tasks
+    Route::get('/dashboard', [TaskController::class, 'index'])->name('dashboard');
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-});
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'tasks' => Task::with('priority')->whereOwnerId(Auth::id())->latest()->get(),
-        'priorities' => TaskPriorities::orderBy('level')->get(['id', 'name']),
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+    // Categories
+    Route::post('/categories', [CategoryController::class, 'store'])
+        ->name('categories.store');
 
-Route::middleware('auth')->group(function () {
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
