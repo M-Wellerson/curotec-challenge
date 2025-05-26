@@ -106,6 +106,6 @@ Key environment variables needed in your `.env` file:
 Run tests with:
 
 ```bash
-php artisan test
+php artisan test tests/Feature/Http/Controllers/TaskControllerTest.php
 ```
 
