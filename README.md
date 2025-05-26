@@ -109,5 +109,6 @@ Run tests with:
 
 ```bash
 php artisan test tests/Feature/Http/Controllers/TaskControllerTest.php
+php artisan test tests/Feature/Jobs/CreateMultipleTasksTest.php
 ```
 

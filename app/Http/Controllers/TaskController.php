@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Task\TaskBatchRequest;
 use App\Http\Requests\Task\TaskStoreRequest;
 use App\Http\Resources\Categories\CategoryResource;
 use App\Http\Resources\Tasks\TaskPriorityResource;
 use App\Http\Resources\Tasks\TaskResource;
 use App\Http\Resources\Tasks\TaskStatusResource;
+use App\Jobs\CreateMultipleTasks;
 use App\Models\Category;
 use App\Models\Task;
 use App\Models\TaskPriorities;
 use App\Models\TaskStatuses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 
 class TaskController
 {
-
     public function index(Request $request)
     {
         $statusIds   = $request->filled('status_ids')
@@ -78,5 +77,17 @@ class TaskController
         abort_if($task->owner_id !== auth()->id(), 403);
         $task->update(['status_id'=>$r->status_id]);
         return back();
+    }
+
+    public function batch(TaskBatchRequest $request)
+    {
+        $userId = Auth::id();
+        $tasksData = $request->input('tasks');
+
+        CreateMultipleTasks::dispatch($userId, $tasksData);
+
+        return response()->json([
+            'message' => 'Tasks queued for creation',
+        ], 202);
     }
 }

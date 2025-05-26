@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::patch('/tasks/{task}', [TaskController::class,'update'])->name('tasks.update');
+    Route::post('/tasks/batch', [TaskController::class, 'batch'])->name('tasks.batch');
 
     // Categories
     Route::post('/categories', [CategoryController::class, 'store'])
