@@ -53,6 +53,8 @@ docker-compose exec app php artisan db:seed
 ```bash
 # The application will be available at http://localhost:8000
 docker-compose up -d
+
+npm run dev
 ```
 
 ## Environment Variables

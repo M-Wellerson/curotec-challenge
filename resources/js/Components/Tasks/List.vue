@@ -1,84 +1,106 @@
 <template>
     <div class="space-y-6 relative">
         <!-- create task -->
-        <form @submit.prevent="submit" class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <input
-                v-model="form.title"
-                type="text"
-                placeholder="Task title"
-                class="flex-1 rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-                required
-            />
+        <div class="rounded-lg bg-white p-4 shadow-sm">
+            <h4 class="mb-4 text-lg font-semibold">Create Task</h4>
+            <form @submit.prevent="submit" class="flex items-end gap-4">
+                <input
+                    v-model="form.title"
+                    type="text"
+                    placeholder="Task title"
+                    required
+                    class="h-10 w-64 rounded-md border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
 
-            <multiselect
-                v-model="form.categories"
-                :options="categories"
-                :multiple="true"
-                :close-on-select="false"
-                track-by="id"
-                label="name"
-                placeholder="Select categories"
-                class="w-full sm:max-w-md"
-            />
+                <multiselect
+                    v-model="form.categories"
+                    :options="categories"
+                    multiple
+                    close-on-select="false"
+                    track-by="id"
+                    label="name"
+                    placeholder="Select categories"
+                    class="h-10 w-48 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
 
-            <select
-                v-model.number="form.priority_id"
-                class="rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-                required
-            >
-                <option disabled value="">Priority</option>
-                <option v-for="p in priorities" :key="p.id" :value="p.id">
-                    {{ p.name }}
-                </option>
-            </select>
+                <select
+                    v-model.number="form.priority_id"
+                    required
+                    class="h-10 w-32 rounded-md border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                >
+                    <option disabled value="">Priority</option>
+                    <option v-for="p in priorities" :key="p.id" :value="p.id">{{ p.name }}</option>
+                </select>
 
-            <select
-                v-model.number="form.status_id"
-                class="rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-                required
-            >
-                <option disabled value="">Status</option>
-                <option v-for="s in statuses" :key="s.id" :value="s.id">
-                    {{ s.name }}
-                </option>
-            </select>
+                <select
+                    v-model.number="form.status_id"
+                    required
+                    class="h-10 w-32 rounded-md border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                >
+                    <option disabled value="">Status</option>
+                    <option v-for="s in statuses" :key="s.id" :value="s.id">{{ s.name }}</option>
+                </select>
 
-            <input
-                v-model="form.due_date"
-                type="date"
-                class="rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-            />
+                <input
+                    v-model="form.due_date"
+                    type="date"
+                    class="h-10 w-32 rounded-md border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
 
-            <button
-                type="submit"
-                :disabled="form.processing || !form.title.trim() || !form.priority_id"
-                class="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
-            >
-                Add
-            </button>
-        </form>
+                <button
+                    type="submit"
+                    :disabled="form.processing || !form.title.trim() || !form.priority_id"
+                    class="h-10 w-24 rounded-md bg-indigo-600 px-4 font-medium text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Add
+                </button>
+            </form>
+        </div>
 
-        <div>
-            <Multiselect
-                v-model="selectedCategoryObjs"
-                :options="categories"
-                multiple
-                track-by="id"
-                label="name"
-                placeholder="Categories"
-            />
+        <!-- filter tasks -->
+        <div class="rounded-lg bg-white p-4 shadow-sm">
+            <h4 class="mb-4 text-lg font-semibold">Filters</h4>
+            <div class="flex items-end gap-4 whitespace-nowrap">
+                <Multiselect
+                    v-model="selectedCategoryObjs"
+                    :options="categories"
+                    multiple
+                    track-by="id"
+                    label="name"
+                    placeholder="Categories"
+                    class="w-56"
+                />
 
-            <Multiselect
-                v-model="selectedStatusObjs"
-                :options="statuses"
-                multiple
-                track-by="id"
-                label="name"
-                placeholder="Status"
-            />
-            <input type="date" v-model="filter.from"/>
-            <input type="date" v-model="filter.to"/>
-            <button v-if="filter.hasFilters" @click="filter.$reset()" class="text-sm text-gray-600">Clear</button>
+                <Multiselect
+                    v-model="selectedStatusObjs"
+                    :options="statuses"
+                    multiple
+                    track-by="id"
+                    label="name"
+                    placeholder="Status"
+                    class="w-48"
+                />
+
+                <input
+                    type="date"
+                    v-model="filter.from"
+                    class="w-40 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+
+                <input
+                    type="date"
+                    v-model="filter.to"
+                    class="w-40 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+
+                <button
+                    :disabled="!filter.hasFilters"
+                    @click="filter.reset()"
+                    class="h-10 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed disabled:shadow-none"
+                >
+                    Clear filters
+                </button>
+            </div>
         </div>
 
         <!-- list tasks -->
@@ -89,7 +111,16 @@
             >
                 <div class="flex justify-between">
                     <div>
-                        <p class="font-medium">{{ task.title }}</p>
+                        <label class="inline-flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                :checked="task.status.id === doneStatusId"
+                                @change="toggleDone(task)"
+                                :disabled="task.status.id === doneStatusId"
+                                class="h-4 w-4 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            />
+                            <span :class="{'line-through text-gray-400': task.status.id === doneStatusId}">{{ task.title }}</span>
+                        </label>
                         <p class="text-xs text-gray-500">
                             Due: {{ task.due_date ? new Date(task.due_date).toLocaleDateString() : '—' }} •
                             {{ task.priority?.name || '—' }} • {{ task.status?.name || '—' }}
@@ -100,7 +131,8 @@
                     </div>
                     <button
                         @click="promptDelete(task.id)"
-                        class="text-sm font-medium text-red-600 hover:text-red-800"
+                        :disabled="task.status.id === doneStatusId"
+                        class="text-sm font-medium text-red-600 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Delete
                     </button>
@@ -239,6 +271,21 @@ function confirmDelete() {
 function formatTs(ts) {
     return new Date(ts).toLocaleString();
 }
+
+const doneStatusId = computed(() => {
+    const s = props.statuses.find(st => st.name.toLowerCase() === 'done');
+    return s ? s.id : null;
+});
+
+function toggleDone(task) {
+    const targetStatus = task.status.id === doneStatusId.value ? task.prev_status_id || defaultStatusId : doneStatusId.value;
+    router.patch(route('tasks.update', task.id), { status_id: targetStatus }, { preserveScroll: true });
+}
+
+const defaultStatusId = computed(() => {
+    const s = props.statuses.find(st => st.name.toLowerCase() === 'todo');
+    return s ? s.id : null;
+});
 
 const priorities = computed(() => props.priorities);
 </script>

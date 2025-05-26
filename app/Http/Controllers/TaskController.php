@@ -71,4 +71,12 @@ class TaskController
 
         return back();
     }
+
+    public function update(Request $r, Task $task)
+    {
+        $r->validate(['status_id'=>'required|exists:task_statuses,id']);
+        abort_if($task->owner_id !== auth()->id(), 403);
+        $task->update(['status_id'=>$r->status_id]);
+        return back();
+    }
 }
